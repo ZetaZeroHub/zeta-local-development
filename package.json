@@ -1,0 +1,31 @@
+{
+  "name": "@zeta-studio/local-development",
+  "version": "0.2.0",
+  "license": "Apache-2.0",
+  "description": "Connect local AI tools to Zeta Studio and develop games with MCP",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kinglegendzzh/zeta-local-development.git"
+  },
+  "files": [
+    "src",
+    "native",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "bin": {
+    "zeta-dev": "src/cli.mjs"
+  },
+  "scripts": {
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.31.0",
+    "smol-toml": "1.9.0"
+  }
+}
