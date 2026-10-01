@@ -1,6 +1,6 @@
 {
   "name": "@zeta-studio/local-development",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "Apache-2.0",
   "description": "Connect local AI tools to Zeta Studio and develop games with MCP",
   "repository": {

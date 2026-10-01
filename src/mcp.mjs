@@ -55,6 +55,29 @@ export async function doctor(url, token) {
   } catch { throw failure('MCP 初始化或工具列表检查失败，请检查连接是否过期、撤销或服务停用。', 'MCP'); }
   finally { await client.close().catch(() => {}); }
 }
+// Shell-capable agents use the same authenticated MCP transport and server
+// permission checks. No token export or second HTTP/tool implementation.
+export async function agentCommand(url, token, {name, arguments:args, signal} = {}) {
+  const client = new Client({name:'zeta-dev-agent',version:'0.2.2'});
+  try {
+    await client.connect(transport(url, token), {timeout:15000,signal});
+    const tools=[];let cursor;
+    for(let page=0;page<50;page++){
+      const result=await client.listTools(cursor?{cursor}:{});
+      tools.push(...result.tools.filter(tool=>/^game_[a-z_]+$/.test(tool.name)));
+      cursor=result.nextCursor;if(!cursor)break;
+    }
+    if(cursor)throw failure('工具列表不完整，请稍后重试。','RESPONSE');
+    if(!name)return {tools};
+    if(!tools.some(tool=>tool.name===name))throw failure('当前连接未开放此游戏工具。','COMMAND');
+    const result=await client.callTool({name,arguments:args},undefined,{timeout:30000,signal});
+    if(!result.structuredContent || typeof result.structuredContent!=='object')throw failure('游戏工具响应格式无效。','RESPONSE');
+    return result.structuredContent;
+  } catch(error) {
+    if(error.safeMessage)throw error;
+    throw failure('游戏工具调用结果未确认。请查询原任务状态，不要重复创建任务。','UNCERTAIN');
+  } finally {await client.close().catch(()=>{});}
+}
 export async function bridge(url, token, { input = process.stdin, output = process.stdout, signal, diagnostic = () => {} } = {}) {
   const remote = transport(url, token); const local = new StdioServerTransport(input, output, { maxBufferSize: 1024 * 1024 });
   let closing = false, inFlight = 0, finish;

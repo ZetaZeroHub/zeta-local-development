@@ -1,16 +1,29 @@
 # Zeta Studio 本地游戏创作
 
-把接入提示词发给 Codex、Cursor 或 Claude Code，AI 安装 MCP 与游戏 Skill，你在网页确认项目权限，再继续聊天创作。保存后返回平台试玩和提交发布。
+把接入提示词发给你使用的 AI 工具，AI 安装 MCP 与游戏 Skill，你在网页确认项目权限，再继续聊天创作。工程和 AI 工具在电脑上，平台授权、验证和保存使用线上服务，无需启动本地 Zeta 前后端。保存后返回平台试玩和提交发布。
 
 ## 一次接入
 
 需要 Node.js 20.19+，在选定项目目录执行（工具公开发行于 GitHub；未发布至 npm 注册表）：
 
 ```sh
-npx --yes --package=https://github.com/ZetaZeroHub/zeta-local-development/releases/download/v0.2.1/zeta-studio-local-development-0.2.1.tgz zeta-dev install --ide codex --server https://api.zzh.app --directory .
+npx --yes --package=https://github.com/ZetaZeroHub/zeta-local-development/releases/download/v0.2.2/zeta-studio-local-development-0.2.2.tgz zeta-dev install --ide codex --server https://api.zzh.app --web-origin https://studio.zzh.app --profile zeta-online --directory .
 ```
 
-`--ide` 可选 `codex`、`cursor`、`claude` 或逗号组合。命令会自动打开网页授权，并等待确认。仅安装选定目录内 `.codex/config.toml` / `.cursor/mcp.json` / `.mcp.json` 与 `.agents/skills/zeta-game` / `.claude/skills/zeta-game`，保留其他服务与配置。更新原配置前生成同目录备份；遇到已有不同 zeta 配置或 Skill 本地修改则停止，不会覆盖。
+`--web-origin` 使用当前平台域名，例如 `https://game.zzh.app`；服务端只接受明确开放的站点，不根据 Host 猜域名。不传该参数的旧客户端仍使用服务端默认站点。HTTPS 用于线上；HTTP 仅允许 loopback 联调，换环境用不同 profile。
+
+`--ide` 支持 `codex`、`claude`、`cursor`、`traecode`、`traework`、`workbuddy`、`antigravity`、`pi`、`openclaw`、`hermes` 或逗号组合。命令自动打开网页授权，并等待确认。配置仅写选定项目目录，凭证仅保存在系统凭证库；保留其他服务、配置和 Skill 本地修改，更新前备份，冲突则停止。
+
+| 工具 | 项目配置与下一步 |
+|---|---|
+| Codex / Claude Code / Cursor | `.codex/config.toml` / `.mcp.json` / `.cursor/mcp.json`；信任项目并刷新 MCP |
+| TraeCode | `.trae/mcp.json`；在 MCP 设置中启用可信项目配置 |
+| WorkBuddy | `.workbuddy/mcp.json`；刷新并检查服务器连接 |
+| 新版 Pi | `.pi/mcp.json`；项目信任，使用内置 MCP，执行 `/reload` |
+| TraeWork / Antigravity / Hermes | 生成 `zeta-mcp.json`，按 integration.docs 官方说明导入；不自动修改全局设置 |
+| OpenClaw / 无原生 MCP 的工具 | 读取 `.agents/skills/zeta-game/SKILL.md`，用 `tools` 读取 schema，`call --tool NAME --arguments JSON` 调用同一 MCP；需要本机命令执行与凭证库访问 |
+
+非 Claude 的 Skill 位于 `.agents/skills/zeta-game`，Claude 位于 `.claude/skills/zeta-game`。不同客户端版本的自动发现规则有差异，提示词会要求 AI 直接读取该文件。
 
 安装后刷新 MCP 或重新打开工具。Codex 需要信任项目目录，才会读取项目级配置。网页授权、doctor 检查和 Agent 实际工具调用是不同验证步骤。重跑相同安装命令可以安全恢复；换账号/服务用新的 `--profile NAME`。
 

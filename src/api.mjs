@@ -20,11 +20,12 @@ export async function request(server, path, body, { fetchImpl = fetch, signal, m
   if (envelope?.data == null) throw failure('服务未返回有效结果。', 'RESPONSE');
   return envelope.data;
 }
-export async function pair({ server, label, onVerification, signal, fetchImpl, wait = ms => new Promise(r => setTimeout(r, ms)) }) {
-  const start = await request(server, '/api/v1/development/pairings', { label }, { fetchImpl, signal });
+export async function pair({ server, label, webOrigin, onVerification, signal, fetchImpl, wait = ms => new Promise(r => setTimeout(r, ms)) }) {
+  const selectedOrigin = webOrigin ? endpoint(webOrigin, {originOnly:true}) : undefined;
+  const start = await request(server, '/api/v1/development/pairings', { label, ...(selectedOrigin ? {webOrigin:selectedOrigin} : {}) }, { fetchImpl, signal });
   if (!/^[0-9a-f-]{36}$/.test(start.pairingId || '') || !/^[A-Za-z0-9_-]{43}$/.test(start.deviceSecret || '') || !Number.isFinite(Date.parse(start.expiresAt))) throw failure('配对响应无效。', 'RESPONSE');
   let verification; try { verification = new URL(start.verificationUrl); } catch { throw failure("配对地址无效。", "RESPONSE"); }
-  if (verification.searchParams.get("pairingId") !== start.pairingId || [...verification.searchParams].length !== 1) throw failure("配对地址无效。", "RESPONSE");
+  if (verification.pathname !== '/local-development/pair' || verification.searchParams.get("pairingId") !== start.pairingId || [...verification.searchParams].length !== 1 || (selectedOrigin && verification.origin !== selectedOrigin)) throw failure("配对地址与所选平台不一致。", "RESPONSE");
   const verificationURL = verification.href; verification.search = ""; endpoint(verification.href);
   // Verification URLs contain the public pairing ID; deviceSecret never leaves the exchange body.
   await onVerification({ verificationURL, expiresAt: start.expiresAt });

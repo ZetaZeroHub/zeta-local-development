@@ -1,0 +1,12 @@
+[
+  {"id":"codex","label":"Codex","logo":"codex.png","config":".codex/config.toml","kind":"project","docs":"https://developers.openai.com/codex/mcp/"},
+  {"id":"claude","label":"Claude Code","logo":"claude.png","config":".mcp.json","kind":"project","docs":"https://code.claude.com/docs/en/mcp"},
+  {"id":"cursor","label":"Cursor","logo":"cursor.png","config":".cursor/mcp.json","kind":"project","docs":"https://cursor.com/docs/context/mcp"},
+  {"id":"traecode","label":"TraeCode","logo":"trae.png","config":".trae/mcp.json","kind":"project","docs":"https://docs.trae.cn/ide_add-mcp-servers"},
+  {"id":"traework","label":"TraeWork","logo":"trae.png","config":null,"kind":"guided","docs":"https://docs.trae.cn/work_remote-mcp-server"},
+  {"id":"workbuddy","label":"WorkBuddy","logo":"workbuddy.svg","config":".workbuddy/mcp.json","kind":"project","docs":"https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide"},
+  {"id":"antigravity","label":"Antigravity","logo":"antigravity.png","config":null,"kind":"guided","docs":"https://antigravity.google/docs/mcp"},
+  {"id":"pi","label":"Pi","logo":"pi.svg","config":".pi/mcp.json","kind":"project","docs":"https://pi.dev/docs/latest/mcp"},
+  {"id":"openclaw","label":"OpenClaw","logo":"openclaw.png","config":null,"kind":"cli","docs":"https://docs.openclaw.ai/tools/skills"},
+  {"id":"hermes","label":"Hermes","logo":"hermes.ico","config":null,"kind":"guided","docs":"https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp"}
+]

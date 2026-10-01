@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { parse, stringify } from 'smol-toml';
 import { failure } from './api.mjs';
 import { launcher } from './release.mjs';
+import clientDefinitions from './clients.json' with {type:'json'};
 
 async function safePath(root, relative) {
   let current = root;
@@ -37,10 +38,11 @@ export async function installProject({directory='.', ide='codex', profile='defau
   // Reject symlinks in every existing ancestor, including the caller's directory.
   let cursor = root; while (true) { if ((await lstat(cursor)).isSymbolicLink()) throw failure('项目目录不能是符号链接。','INSTALL'); const parent=path.dirname(cursor); if(parent===cursor)break;cursor=parent; }
   const clients=ide.split(',');
-  if (!clients.length || new Set(clients).size!==clients.length || clients.some(value=>!['codex','cursor','claude'].includes(value))) throw failure('--ide 使用 codex、cursor、claude，可用逗号分隔。','INSTALL');
+  if (!clients.length || new Set(clients).size!==clients.length || clients.some(value=>!clientDefinitions.some(client=>client.id===value))) throw failure('--ide 使用 '+clientDefinitions.map(client=>client.id).join('、')+'，可用逗号分隔。','INSTALL');
   const launch=launcher(profile), plans=[];
   for (const client of clients) {
-    const relative=client==='codex'?'.codex/config.toml':client==='cursor'?'.cursor/mcp.json':'.mcp.json';
+    const definition=clientDefinitions.find(value=>value.id===client);
+    const relative=definition.config||'zeta-mcp.json';
     const file=await safePath(root,relative), raw=await existing(file);
     let doc;
     try { doc=raw===null?{}:client==='codex'?parse(raw):JSON.parse(raw); }
@@ -73,5 +75,8 @@ export async function installProject({directory='.', ide='codex', profile='defau
     plans.push({file,raw,next});
   }
   for(const plan of plans)await commit(plan.file,plan.raw,plan.next);
-  return {directory:root,clients,files:plans.map(value=>path.relative(root,value.file)),skill:'zeta-game',needsClientRefresh:true};
+  return {directory:root,clients,files:plans.map(value=>path.relative(root,value.file)),skill:'zeta-game',needsClientRefresh:true,integration:clients.map(client=>{
+    const definition=clientDefinitions.find(value=>value.id===client);
+    return {client,kind:definition.kind,config:definition.config||'zeta-mcp.json',docs:definition.docs};
+  })};
 }
