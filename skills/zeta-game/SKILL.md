@@ -7,7 +7,7 @@ description: Create and improve games on Zeta Studio through its MCP connection,
 
 帮助用户从想法到可试玩、可继续编辑的游戏。先读取本 Skill 同目录的 `connection.json`（只有服务器地址和连接名称），发现当前 `zeta` MCP 工具及输入 schema，不读取凭证库或个人配置。必要时执行固定公开版本 CLI：
 
-`npx --yes --package=https://github.com/kinglegendzzh/zeta-local-development/releases/download/v0.2.0/zeta-studio-local-development-0.2.0.tgz zeta-dev <命令>`
+`npx --yes --package=https://github.com/ZetaZeroHub/zeta-local-development/releases/download/v0.2.1/zeta-studio-local-development-0.2.1.tgz zeta-dev <命令>`
 
 所有 CLI 命令带 `--profile` 的实际连接名。工具未连通时运行 `doctor` 并按结果恢复；如果项目配置刚安装，提示刷新 MCP / 重启工具和信任项目，不假称已能调用。
 

@@ -7,7 +7,7 @@
 需要 Node.js 20.19+，在选定项目目录执行（工具公开发行于 GitHub；未发布至 npm 注册表）：
 
 ```sh
-npx --yes --package=https://github.com/kinglegendzzh/zeta-local-development/releases/download/v0.2.0/zeta-studio-local-development-0.2.0.tgz zeta-dev install --ide codex --server https://api.zzh.app --directory .
+npx --yes --package=https://github.com/ZetaZeroHub/zeta-local-development/releases/download/v0.2.1/zeta-studio-local-development-0.2.1.tgz zeta-dev install --ide codex --server https://api.zzh.app --directory .
 ```
 
 `--ide` 可选 `codex`、`cursor`、`claude` 或逗号组合。命令会自动打开网页授权，并等待确认。仅安装选定目录内 `.codex/config.toml` / `.cursor/mcp.json` / `.mcp.json` 与 `.agents/skills/zeta-game` / `.claude/skills/zeta-game`，保留其他服务与配置。更新原配置前生成同目录备份；遇到已有不同 zeta 配置或 Skill 本地修改则停止，不会覆盖。
